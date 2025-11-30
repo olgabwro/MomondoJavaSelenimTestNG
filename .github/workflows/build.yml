@@ -1,0 +1,52 @@
+# Имя workflow, которое будет отображаться в GitHub Actions
+name: Build Java with Maven on CI
+
+# Проверка запускается при создании pull request в main
+on:
+  pull_request:
+    branches: [ "main" ]
+
+# Указываем работы, которые будут запускаться (build, check-java-code-style)
+jobs:
+  build:
+    name: Build On
+    # GitHub Actions запускает виртуальную машину с Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+    # Шаг 1: Клонируем репозиторий в рабочую директорию
+    - name: Clone code from repo
+      uses: actions/checkout@v4
+      with: 
+        fetch-depth: 0
+    # Шаг 2: Устанавливаем JDK 17 и включаем кеширование Maven зависимостей
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'corretto'
+        cache: maven
+    # Шаг 3: Кеширование зависимостей Maven, чтобы ускорить сборку проекта
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    # Шаг 4: Сборка проекта с Maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+  check-java-code-style:
+    name: Check Java code style
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone code from repo
+        uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+      - name: Run java checkstyle
+        uses: nikitasavinov/checkstyle-action@0.6.0
