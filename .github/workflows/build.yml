@@ -48,5 +48,5 @@ jobs:
         uses: actions/checkout@v4
         with: 
           fetch-depth: 0
-      - name: Run java checkstyle
-        uses: nikitasavinov/checkstyle-action@0.6.0
+      - name: Checkstyle for Java
+        uses: dbelyaev/action-checkstyle@v3.1.0
