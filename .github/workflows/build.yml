@@ -4,7 +4,7 @@ name: Build Java with Maven on CI
 # Проверка запускается при создании pull request в main
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: main
 
 # Указываем работы, которые будут запускаться (build, check-java-code-style)
 jobs:
